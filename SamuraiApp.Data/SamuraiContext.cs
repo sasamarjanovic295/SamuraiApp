@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SamuraiApp.Domain;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace SamuraiApp.Data
 {
@@ -9,12 +10,15 @@ namespace SamuraiApp.Data
 	{
         public DbSet<Samurai> Samurais { get; set; }
         public DbSet<Quote> Quotes { get; set; }
-        public List<Battle> Battles { get; set; }
+        public DbSet<Battle> Battles { get; set; }
+        public DbSet<Horse> Horses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=192.168.0.112, 1434;Initial Catalog=SamuraiAppDb; User ID=novistudent;Password=novistudent");
-            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer(
+                @"Data Source=192.168.0.112, 1434;Initial Catalog=SamuraiAppDb; User ID=novistudent;Password=novistudent")
+                .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
+                .EnableSensitiveDataLogging();          
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
