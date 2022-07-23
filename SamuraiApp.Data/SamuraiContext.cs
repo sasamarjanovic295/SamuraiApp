@@ -16,7 +16,8 @@ namespace SamuraiApp.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                @"Data Source=192.168.0.112, 1434;Initial Catalog=SamuraiAppDb; User ID=novistudent;Password=novistudent")
+                @"Data Source=192.168.0.112, 1434;Initial Catalog=SamuraiAppDb; User ID=novistudent;Password=novistudent",
+                options => options.MaxBatchSize(100))
                 .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
                 .EnableSensitiveDataLogging();          
         }
