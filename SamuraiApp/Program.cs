@@ -11,7 +11,7 @@ namespace SamuraiApp.UI
         private static SamuraiContext _context = new SamuraiContext();
         public static void Main()
         {
-            GetHorseWithSamurai();
+            QueryUsingFromSqlRawStoredProc();
         }
         static void AddSamurais(params string[] names)
         {
@@ -263,6 +263,37 @@ namespace SamuraiApp.UI
                 .Select(s => new { Horse = s.Horse, Samurai = s })
                 .ToList();
             var horseonly = _context.Set<Horse>().Find(5);
+        }
+        private static void QuerrySamuraiBattleStats()
+        {
+            var stats = _context.SamuraiBattleStats.ToList();
+        }
+        private static void QueryUsingRawSql()
+        {
+            var samurais = _context.Samurais.FromSqlRaw("Select * from samurais").ToList();
+        }
+        private static void QueryRelatedUsingRawSql()
+        {
+            var samurais = _context.Samurais.FromSqlRaw(
+                "Select Id, Name from samurais").Include(s => s.Quotes).ToList();
+        }
+        private static void QueryUsingRawSqlWithInterpolation()
+        {
+            string name = "sale";
+            var samurais = _context.Samurais
+                .FromSqlInterpolated($"Select * from Samurais where Name = {name}")
+                .ToList();
+        }
+        private static void QueryUsingFromSqlRawStoredProc()
+        {
+            var text = "Happy";
+            var samurais = _context.Samurais.FromSqlRaw(
+                "EXEC dbo.SamuraisWhoSaidAWord {0}", text);
+        }
+        private static void ExecuteSomeRawSql()
+        {
+            var samuraiId = 2;
+            var affected = _context.Database.ExecuteSqlRaw("Exec DeleteQuotesForSamurai {0}", samuraiId);
         }
     }
 }
